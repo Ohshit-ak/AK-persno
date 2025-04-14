@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Laboratory | Akshith Kandagatla</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Nosifer&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="blood-drip top-drip"></div>
+    
+    <header>
+        <div class="container">
+            <p class="tagline">Master of Code and Chaos</p>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="education.html">Training</a></li>
+                    <li><a href="skills.html">Arsenal</a></li>
+                    <li><a href="achievements.html">Trophies</a></li>
+                    <li><a href="blog.html" >Laboratory</a></li>
+                </ul>
+            </nav>
+            <h1>AKSHITH KANDAGATLA</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="text-analysis">
+            <h2>Text Dissection Laboratory</h2>
+            <p class="lab-intro">Welcome to my textual dissection chamber. Feed the beast with your words, and watch as it tears apart the linguistic anatomy, revealing the hidden structures within.</p>
+            
+            <div class="text-input-container">
+                <textarea id="textInput" placeholder="Enter your text here (at least 10,000 words for a proper autopsy)..." rows="15"></textarea>
+                <div class="control-panel">
+                    <button id="analyzeBtn" class="analyze-button">DISSECT TEXT</button>
+                    <button id="clearBtn" class="clear-button">PURGE TEXT</button>
+                    <button id="sampleBtn" class="sample-button">SUMMON SAMPLE</button>
+                </div>
+            </div>
+            
+            <div class="results-container" id="resultsContainer">
+                <div class="results-section">
+                    <h3>Basic Anatomy</h3>
+                    <div id="basicStats" class="stats-grid"></div>
+                </div>
+                
+                <div class="results-section">
+                    <h3>Pronoun Analysis</h3>
+                    <div id="pronounStats" class="stats-table"></div>
+                </div>
+                
+                <div class="results-section">
+                    <h3>Preposition Analysis</h3>
+                    <div id="prepositionStats" class="stats-table"></div>
+                </div>
+                
+                <div class="results-section">
+                    <h3>Indefinite Article Analysis</h3>
+                    <div id="articleStats" class="stats-table"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Akshith Kandagatla. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://github.com/Ohshit-ak" class="social-link">GitHub</a>
+                <a href="https://www.linkedin.com/in/kandagatla-akshith-4b9a5131b/" class="social-link">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Text Analysis JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const textInput = document.getElementById('textInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const basicStats = document.getElementById('basicStats');
+            const pronounStats = document.getElementById('pronounStats');
+            const prepositionStats = document.getElementById('prepositionStats');
+            const articleStats = document.getElementById('articleStats');
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            // Hide results initially
+            resultsContainer.style.display = 'none';
+
+            // Event Listeners
+            analyzeBtn.addEventListener('click', analyzeText);
+            clearBtn.addEventListener('click', clearText);
+            sampleBtn.addEventListener('click', loadSampleText);
+
+            // Function to analyze text
+            function analyzeText() {
+                const text = textInput.value.trim();
+                
+                if (text.length === 0) {
+                    alert('Please enter some text to dissect!');
+                    return;
+                }
+                
+                // Calculate basic stats
+                calculateBasicStats(text);
+                
+                // Analyze pronouns, prepositions, and articles
+                analyzePronouns(text);
+                analyzePrepositions(text);
+                analyzeArticles(text);
+                
+                // Show results
+                resultsContainer.style.display = 'block';
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Function to calculate basic statistics
+            function calculateBasicStats(text) {
+                const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
+                const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+                const spaceCount = (text.match(/\s/g) || []).length;
+                const newlineCount = (text.match(/\n/g) || []).length;
+                const specialSymbolCount = (text.match(/[^\w\s]/g) || []).length;
+                
+                // Display basic stats
+                basicStats.innerHTML = `
+                    <div class="stat-item">
+                        <span class="stat-label">Letters:</span>
+                        <span class="stat-value">${letterCount}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Words:</span>
+                        <span class="stat-value">${wordCount}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Spaces:</span>
+                        <span class="stat-value">${spaceCount}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Newlines:</span>
+                        <span class="stat-value">${newlineCount}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Special Symbols:</span>
+                        <span class="stat-value">${specialSymbolCount}</span>
+                    </div>
+                `;
+            }
+
+            // Function to analyze pronouns
+            function analyzePronouns(text) {
+                const pronounGroups = {
+                    'Personal Pronouns': ['i', 'me', 'my', 'mine', 'myself', 'you', 'your', 'yours', 'yourself', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'we', 'us', 'our', 'ours', 'ourselves', 'they', 'them', 'their', 'theirs', 'themselves'],
+                    'Demonstrative Pronouns': ['this', 'that', 'these', 'those'],
+                    'Interrogative Pronouns': ['who', 'whom', 'whose', 'which', 'what'],
+                    'Relative Pronouns': ['who', 'whom', 'whose', 'which', 'that'],
+                    'Indefinite Pronouns': ['anybody', 'anyone', 'anything', 'each', 'either', 'everybody', 'everyone', 'everything', 'neither', 'nobody', 'nothing', 'one', 'somebody', 'someone', 'something', 'both', 'few', 'many', 'several', 'all', 'any', 'most', 'none', 'some']
+                };
+                
+                // Tokenize the text
+                let words = text.toLowerCase().match(/\b\w+\b/g) || [];
+                
+                // Create HTML for display
+                let html = '<table><tr><th>Pronoun</th><th>Count</th></tr>';
+                
+                // For each pronoun group
+                for (const [groupName, pronouns] of Object.entries(pronounGroups)) {
+                    // Create a counter for each pronoun
+                    const pronounCount = {};
+                    pronouns.forEach(pronoun => {
+                        pronounCount[pronoun] = 0;
+                    });
+                    
+                    // Count occurrences
+                    words.forEach(word => {
+                        if (pronouns.includes(word)) {
+                            pronounCount[word]++;
+                        }
+                    });
+                    
+                    // Filter out pronouns with zero occurrences
+                    const foundPronouns = pronouns.filter(p => pronounCount[p] > 0);
+                    
+                    // If any pronouns were found in this group
+                    if (foundPronouns.length > 0) {
+                        html += `<tr class="group-header"><td colspan="2">${groupName}</td></tr>`;
+                        
+                        // Sort pronouns by count (descending)
+                        foundPronouns.sort((a, b) => pronounCount[b] - pronounCount[a]);
+                        
+                        // Add each pronoun and its count
+                        foundPronouns.forEach(pronoun => {
+                            html += `<tr><td>${pronoun}</td><td>${pronounCount[pronoun]}</td></tr>`;
+                        });
+                    }
+                }
+                
+                html += '</table>';
+                pronounStats.innerHTML = html;
+            }
+
+            // Function to analyze prepositions
+            function analyzePrepositions(text) {
+                const prepositions = ['about', 'above', 'across', 'after', 'against', 'along', 'amid', 'among', 'around', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 'between', 'beyond', 'by', 'concerning', 'considering', 'despite', 'down', 'during', 'except', 'for', 'from', 'in', 'inside', 'into', 'like', 'near', 'of', 'off', 'on', 'onto', 'out', 'outside', 'over', 'past', 'regarding', 'round', 'since', 'through', 'to', 'toward', 'under', 'underneath', 'until', 'unto', 'up', 'upon', 'with', 'within', 'without'];
+                
+                // Tokenize the text
+                let words = text.toLowerCase().match(/\b\w+\b/g) || [];
+                
+                // Create a counter for each preposition
+                const prepositionCount = {};
+                prepositions.forEach(prep => {
+                    prepositionCount[prep] = 0;
+                });
+                
+                // Count occurrences
+                words.forEach(word => {
+                    if (prepositions.includes(word)) {
+                        prepositionCount[word]++;
+                    }
+                });
+                
+                // Filter out prepositions with zero occurrences
+                const foundPrepositions = prepositions.filter(p => prepositionCount[p] > 0);
+                
+                // Create HTML for display
+                let html = '<table><tr><th>Preposition</th><th>Count</th></tr>';
+                
+                // Sort prepositions by count (descending)
+                foundPrepositions.sort((a, b) => prepositionCount[b] - prepositionCount[a]);
+                
+                // Add each preposition and its count
+                foundPrepositions.forEach(prep => {
+                    html += `<tr><td>${prep}</td><td>${prepositionCount[prep]}</td></tr>`;
+                });
+                
+                html += '</table>';
+                prepositionStats.innerHTML = html;
+            }
+
+            // Function to analyze indefinite articles
+            function analyzeArticles(text) {
+                const articles = ['a', 'an'];
+                
+                // Tokenize the text
+                let words = text.toLowerCase().match(/\b\w+\b/g) || [];
+                
+                // Create a counter for each article
+                const articleCount = {
+                    'a': 0,
+                    'an': 0
+                };
+                
+                // Count occurrences
+                words.forEach(word => {
+                    if (articles.includes(word)) {
+                        articleCount[word]++;
+                    }
+                });
+                
+                // Create HTML for display
+                let html = '<table><tr><th>Indefinite Article</th><th>Count</th></tr>';
+                
+                // Add each article and its count
+                articles.forEach(article => {
+                    html += `<tr><td>${article}</td><td>${articleCount[article]}</td></tr>`;
+                });
+                
+                html += '</table>';
+                articleStats.innerHTML = html;
+            }
+
+            // Function to clear the text input
+            function clearText() {
+                textInput.value = '';
+                resultsContainer.style.display = 'none';
+            }
+
+            // Function to load sample text
+            function loadSampleText() {
+                // Sample text with more than 10000 words
+                fetch('https://www.gutenberg.org/files/1342/1342-0.txt')
+                    .then(response => response.text())
+                    .then(text => {
+                        // Extract a portion to ensure it's not too large
+                        const excerpt = text.slice(0, 100000);
+                        textInput.value = excerpt;
+                        alert('Sample text from "Pride and Prejudice" by Jane Austen has been summoned for dissection.');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching sample text:', error);
+                        textInput.value = "It was a dark and stormy night. The wind howled through the ancient trees, their twisted branches scraping against the window panes like skeletal fingers seeking entry. Inside, a lone figure hunched over a manuscript, pen scratching frantically across the yellowed pages. Words flowed like blood from a wound, telling tales of terror and despair that would haunt the minds of readers for generations to come.";
+                        alert('Network error. A smaller sample has been provided instead.');
+                    });
+            }
+
+            // When page reloads, redirect to reload.html
+            window.addEventListener('load', function() {
+                if (performance.navigation.type === 1) {
+                    // Store current URL in session storage
+                    sessionStorage.setItem('previousPage', 'blog.html');
+                    // This is a page reload
+                    window.location.href = 'reload.html';
+                }
+            });
+        });
+    </script>
+
+    <script src="tracking.js"></script>
+</body>
+</html>
