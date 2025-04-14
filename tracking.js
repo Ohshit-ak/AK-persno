@@ -1,16 +1,16 @@
 /**
  * Event Tracking Script - Horror Theme
  * 
- * This script captures all click events and page views performed by users 
- * across HTML tags and CSS objects and logs them to the console.
+ * This script captures all click events, page views, and page reloads 
+ * performed by users across HTML tags and CSS objects and logs them to the console.
  */
 
 // Initialize tracking when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log("🩸 Victim tracking initialized 🩸");
     
-    // Track initial page view
-    trackPageView();
+    // Track initial page view or reload
+    trackPageLoad();
     
     // Add click event listeners to all elements
     setupClickTracking();
@@ -32,12 +32,25 @@ function getFormattedTimestamp() {
 }
 
 /**
- * Track page view event
+ * Track page load event (both initial loads and reloads)
  */
-function trackPageView() {
+function trackPageLoad() {
     const timestamp = getFormattedTimestamp();
-    const page = document.title || "Unknown Page";
-    console.log(`${timestamp}, view, page_entered: ${page}`);
+    const page = document.title || window.location.pathname || "Unknown Page";
+    const isReload = window.performance && window.performance.navigation.type === 1;
+    
+    if (isReload) {
+        // This is a reload
+        console.log(`${timestamp}, reload, page_reloaded: ${page} | Victim has returned`);
+        
+        // Special handling for reload.html
+        if (window.location.pathname.includes("reload.html")) {
+            console.log(`${timestamp}, special_reload, reload.html detected | The ritual continues`);
+        }
+    } else {
+        // This is a fresh page load
+        console.log(`${timestamp}, view, page_entered: ${page} | Fresh victim arrived`);
+    }
 }
 
 /**
@@ -285,3 +298,9 @@ function setupCursorEffect() {
     `;
     document.head.appendChild(style);
 }
+
+// Listen for page before unload to track navigation away
+window.addEventListener('beforeunload', function() {
+    const timestamp = getFormattedTimestamp();
+    console.log(`${timestamp}, leaving_page, ${document.title || window.location.pathname} | Victim escaping`);
+});
