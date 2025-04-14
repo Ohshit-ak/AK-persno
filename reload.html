@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ghost Text Disintegrate with H1 and Custom Fonts</title>
+<!-- Font links -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Nosifer&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+canvas {
+  position: absolute;
+  display: block;
+  z-index: 10;
+}
+h1 {
+  color: red;
+  font-size: 200px;
+  font-family: 'Nosifer', cursive; /* Primary font choice */
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  position: absolute;
+  z-index: 5;
+  opacity: 0; /* Hidden initially - we'll draw to canvas instead */
+}
+
+/* Counter style */
+#countdown {
+  position: absolute;
+  bottom: 20px;
+  color: #600;
+  font-family: 'Special Elite', cursive;
+  font-size: 1.5rem;
+  z-index: 100;
+}
+</style>
+</head>
+<body>
+<h1 id="main-text">AK</h1>
+<div id="countdown">Redirecting in 5...</div>
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const h1Text = document.getElementById('main-text');
+const countdownEl = document.getElementById('countdown');
+let particles = [];
+const text = h1Text.textContent;
+const duration = 5000; // 5 seconds
+let imageData;
+let timeLeft = 5;
+
+// Different font choices (you can change the primary font in the CSS above)
+const fontOptions = [
+  "'Nosifer', cursive",  // Default from the h1 style
+  "'Creepster', cursive",
+  "'Special Elite', cursive"
+];
+
+// Redirect to previous page
+function redirectToPreviousPage() {
+  // Get the previously stored URL from sessionStorage
+  const previousPage = sessionStorage.getItem('previousPage');
+  
+  // If a previous page was stored, go there, otherwise go to index.html
+  if (previousPage) {
+    window.location.href = previousPage;
+  } else {
+    window.location.href = 'index.html';
+  }
+}
+
+// Update countdown timer
+function updateCountdown() {
+  timeLeft--;
+  countdownEl.textContent = `Redirecting in ${timeLeft}...`;
+  
+  if (timeLeft <= 0) {
+    redirectToPreviousPage();
+  } else {
+    setTimeout(updateCountdown, 1000);
+  }
+}
+
+// Properly handle window resizing
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// Initialize canvas
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawText() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Get the computed style of the H1
+  const computedStyle = window.getComputedStyle(h1Text);
+  const fontSize = computedStyle.fontSize;
+  const fontFamily = computedStyle.fontFamily; // This will use the font set in CSS
+  const fontWeight = computedStyle.fontWeight;
+  
+  // Set the canvas font to match the H1
+  ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+  ctx.fillStyle = 'red';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  
+  imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function createParticles() {
+  particles = [];
+  
+  // Create a grid of particles based on text pixels
+  for (let y = 0; y < canvas.height; y += 4) {
+    for (let x = 0; x < canvas.width; x += 4) {
+      const index = (y * canvas.width + x) * 4;
+      if (index < imageData.data.length) {
+        const r = imageData.data[index];
+        const g = imageData.data[index + 1];
+        const b = imageData.data[index + 2];
+        const a = imageData.data[index + 3];
+        
+        if (a > 128) {
+          // Random fade delay for each particle
+          const fadeDelay = Math.random() * 2000; // Random delay up to 2 seconds
+          
+          particles.push({
+            x: x,
+            y: y,
+            originalX: x,
+            originalY: y,
+            dx: 0,
+            dy: -0.8 - Math.random(), // Upward drift
+            opacity: 1,
+            fadeStart: fadeDelay,
+            color: `rgb(${r},${g},${b})`,
+            baseColor: [r, g, b]
+          });
+        }
+      }
+    }
+  }
+}
+
+function animateParticles() {
+  let startTime = performance.now();
+  
+  function animate(time) {
+    const elapsed = time - startTime;
+    const progress = Math.min(1, elapsed / duration);
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      
+      // Calculate particle fade based on time
+      const particleTime = elapsed - p.fadeStart;
+      if (particleTime > 0) {
+        // Fade out over time
+        p.opacity = Math.max(0, 1 - (particleTime / (duration - p.fadeStart)));
+        
+        // Move upward as it fades
+        p.y += p.dy;
+        
+        // Add some horizontal drift
+        p.x += Math.sin(elapsed / 1000 + i) * 0.3;
+        
+        // Draw with fading opacity
+        const [r, g, b] = p.baseColor;
+        ctx.fillStyle = `rgba(${r},${g},${b},${p.opacity})`;
+        ctx.fillRect(p.x, p.y, 2, 2);
+      } else {
+        // Not yet time to fade this particle
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 2, 2);
+      }
+    }
+    
+    if (elapsed < duration) {
+      requestAnimationFrame(animate);
+    }
+  }
+  
+  requestAnimationFrame(animate);
+}
+
+function startEffect() {
+  // Make sure fonts are loaded before drawing
+  document.fonts.ready.then(() => {
+    drawText();
+    setTimeout(() => {
+      createParticles();
+      animateParticles();
+    }, 500); // Show the text for half a second before starting to fade
+  });
+  
+  // Start the countdown
+  setTimeout(updateCountdown, 1000);
+}
+
+// Start the effect when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait a bit for the custom fonts to load
+  setTimeout(() => {
+    // Double check that fonts are loaded
+    if (document.fonts && document.fonts.check(`1em ${fontOptions[0]}`)) {
+      startEffect();
+    } else {
+      // If font API check fails, wait a bit more
+      setTimeout(startEffect, 1000);
+    }
+  }, 500);
+});
+
+// Fallback
+setTimeout(() => {
+  if (particles.length === 0) {
+    startEffect();
+  }
+}, 2000);
+
+// Safety fallback - ensure redirect happens even if animation fails
+setTimeout(redirectToPreviousPage, 5500);
+</script>
+</body>
+</html>
