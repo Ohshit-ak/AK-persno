@@ -562,6 +562,251 @@ footer:before {
     pointer-events: none;
     animation: flicker 5s infinite;
 }
+/* Add these styles to the end of your existing styles.css file */
+
+/* Text Analysis Styles */
+.lab-intro {
+    font-style: italic;
+    margin-bottom: 20px;
+    color: #aaa;
+    font-size: 1.1rem;
+    border-left: 3px solid #500;
+    padding-left: 15px;
+    max-width: 800px;
+}
+
+.text-input-container {
+    margin: 30px 0;
+    position: relative;
+}
+
+#textInput {
+    width: 100%;
+    padding: 15px;
+    background-color: #0c0c0c;
+    border: 1px solid #333;
+    border-radius: 5px;
+    color: #b8b8b8;
+    font-family: 'Special Elite', monospace;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 200px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: #700;
+    box-shadow: 0 0 10px rgba(136, 0, 0, 0.3), inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+#textInput::placeholder {
+    color: #555;
+    font-style: italic;
+}
+
+.control-panel {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.analyze-button,
+.clear-button,
+.sample-button {
+    padding: 12px 24px;
+    border: 1px solid #500;
+    background-color: #300;
+    color: #ddd;
+    font-family: 'Special Elite', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.analyze-button {
+    background-color: #600;
+    border-color: #900;
+}
+
+.clear-button {
+    background-color: #222;
+    border-color: #444;
+}
+
+.sample-button {
+    background-color: #442;
+    border-color: #664;
+}
+
+.analyze-button:hover,
+.clear-button:hover,
+.sample-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.analyze-button:hover {
+    background-color: #900;
+}
+
+.clear-button:hover {
+    background-color: #333;
+}
+
+.sample-button:hover {
+    background-color: #663;
+}
+
+.analyze-button:active,
+.clear-button:active,
+.sample-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+}
+
+/* Button glow effect */
+.analyze-button:before,
+.clear-button:before,
+.sample-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: all 0.8s ease;
+}
+
+.analyze-button:hover:before,
+.clear-button:hover:before,
+.sample-button:hover:before {
+    left: 100%;
+}
+
+/* Results container */
+.results-container {
+    margin-top: 40px;
+    border-top: 2px dashed #444;
+    padding-top: 30px;
+}
+
+.results-section {
+    margin-bottom: 30px;
+    background-color: #0c0c0c;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    border-left: 3px solid #600;
+}
+
+.results-section h3 {
+    margin-top: 0;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    border-bottom: 1px dotted #333;
+    padding-bottom: 10px;
+    color: #900;
+}
+
+/* Stats grid for basic statistics */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    background-color: #111;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 1px solid #222;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-color: #500;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    color: #b00;
+    font-weight: bold;
+}
+
+/* Stats tables for pronouns, prepositions, and articles */
+.stats-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.stats-table th {
+    background-color: #222;
+    color: #ddd;
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: normal;
+    border-bottom: 2px solid #500;
+}
+
+.stats-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #222;
+    transition: all 0.3s ease;
+}
+
+.stats-table tr:hover td {
+    background-color: rgba(68, 0, 0, 0.2);
+}
+
+.stats-table tr:last-child td {
+    border-bottom: none;
+}
+
+.stats-table tr.group-header td {
+    background-color: #222;
+    color: #aaa;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 8px 15px;
+}
+
+/* Make sure the text analysis page works well on mobile */
+@media (max-width: 768px) {
+    .control-panel {
+        flex-direction: column;
+    }
+    
+    .analyze-button,
+    .clear-button,
+    .sample-button {
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
